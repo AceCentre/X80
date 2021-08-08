@@ -15,6 +15,29 @@ The PCB is still a work in progress but it is designed to have:
 
 There are a few differences between the prototype versions:
 
+## Version 4
+
+The funtionality has been split into two boards:
+
+* X80 Standard (designed for Adafruit ItsyBitsy nrf82540)
+* X80 Power (required for LIPO battery as this board includes the chargin circuit)
+
+### X80 Standard
+
+* Majority surface mount components
+* 4 switch inputs (5 with splitter cable on one port)
+* 4 switch outputs
+* One switch 'pass through' (one switch input will still control on switch output without power)
+* buzzer
+* setting potentiometer
+* header for connecting X80 Power or wiring direct to board)
+
+### X80 Power
+
+* JST connector for LIPO battery
+* DB9 connector for connecting external peripherals
+* will allow space in enclosure for LIPO battery
+
 ## Version 3
 
 * Majority surface mount components
