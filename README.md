@@ -19,7 +19,7 @@ There are a few differences between the prototype versions:
 
 The funtionality has been split into two boards:
 
-* X80 Standard (designed for Adafruit ItsyBitsy nrf82540)
+* X80 Standard (designed for Adafruit ItsyBitsy nrf52840 https://www.adafruit.com/product/4481)
 * X80 Power (required for LIPO battery as this board includes the chargin circuit)
 
 ### X80 Standard
