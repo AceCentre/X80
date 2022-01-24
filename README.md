@@ -4,6 +4,12 @@ X80 is an Arduino-based multi-functional input/output device designed to be an i
 
 An X80 can be preprogrammed and repurposed to perform a different function. It's built around the Adafruit Feather, generally the nrf82540 Express. It's essentially a Feather Wing for Assistive Technology (AT).
 
+There are a couple of smilar projects:
+
+https://github.com/google/mimosa
+
+https://github.com/asterics/FABI
+
 The PCB is still a work in progress but it is designed to have:
 
 * Switch inputs via 3.5mm jack
@@ -37,35 +43,3 @@ The funtionality has been split into two boards:
 * JST connector for LIPO battery
 * DB9 connector for connecting external peripherals
 * will allow space in enclosure for LIPO battery
-
-## Version 3
-
-* Majority surface mount components
-* 4 switch inputs (5 with splitter cable on one port)
-* 4 switch outputs
-* One switch 'pass through' (one switch input will still control on switch output without power)
-* buzzer
-* on-board JST connector
-* setting potentiometer
-* on/off switch
-
-We removed the DB9 connector to save space.
-
-## Version 2
-
-* 3 switch inputs
-* 2 switch outputs
-* user button
-* DB9 connector
-* on/off switch
-* setting potentiometer
-* on-board JST connector
-
-## Version 1
-
-* 1 switch input
-* DB9 connector
-* 2 setting poteniometers
-* on/off switch
-
-This is very much a work in progress! There are issues with the PCB right now we're working on.
