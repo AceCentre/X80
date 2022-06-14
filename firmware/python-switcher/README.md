@@ -6,15 +6,15 @@ It takes two switch inputs. One is the 'controller switch' this is passed throug
 
 The 'switcher switch' is debounced however the 'controller switch' is passed as is, so the target device can do its own processing.
 
-## Tasks
+## Tasks
 
-[x] Make the dot star work
-[x] Accept two inputs
-[x] Store the state of which output is currently selected
-[x] Allow for switching output
-[x] Make output user configurable
-[ ] Add some sounds
-[ ] Make the output actually output
+- [x] Make the dot star work
+- [x] Accept two inputs
+- [x] Store the state of which output is currently selected
+- [x] Allow for switching output
+- [x] Make output user configurable
+- [ ] Add some sounds
+- [ ] Make the output actually output
 
 ## Setting up circuit python
 
