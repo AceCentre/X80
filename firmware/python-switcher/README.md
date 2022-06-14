@@ -38,3 +38,5 @@ What would be cool is if we could do some of this configuration without touching
 My thinking is that we could build a webpage that connects to the X80 using bluetooth and then can tweak the values currently stored in `user_constants.py`. This would be done in a nice user friendly way, so any one can change the settings of the device without knowing anything about how it actually works.
 
 Even longer term, we could have just one circuit python firmware which connects via bluetooth and allows you to change the function (via a webpage) of the device without flashing the firmware. This would be super cool.
+
+At some point it would be quite nice to have some kind of auto updater. You load the webpage connect to the X80 via bluetooth and it pushes any new functions and updates to the device. That way users can update themselves without having to flash the firmware.
