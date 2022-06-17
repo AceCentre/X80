@@ -14,7 +14,7 @@ The 'switcher switch' is debounced however the 'controller switch' is passed as 
 - [x] Allow for switching output
 - [x] Make output user configurable
 - [ ] Add some sounds
-- [ ] Make the output actually output
+- [x] Make the output actually output
 
 ## Setting up circuit python
 

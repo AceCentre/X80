@@ -23,8 +23,10 @@ DOTSTAR_BRIGHTNESS = 1
 
 # The output objects, the first one will be enabled by default
 OUTPUTS = [
-    Output('first', (0,0,255)),
-    Output('second', (255,255,255)),
+    Output('first', (0,0,255), OUTPUT_SWITCH_W),
+    Output('second', (255,255,255), OUTPUT_SWITCH_X)
+#    Output('third', (255,0,255), OUTPUT_SWITCH_Y),
+#    Output('fourth', (255,255,0), OUTPUT_SWITCH_Z),
 ]
 
 # The amount of time a the switch needs to be held for before output is switched
