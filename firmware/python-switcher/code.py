@@ -5,6 +5,12 @@ import adafruit_dotstar
 from adafruit_debouncer import Debouncer
 from x80_constants import *
 from user_constants import *
+from buzzer import Buzzer
+from microcontroller import watchdog as watchdoggo
+from watchdog import WatchDogMode
+
+watchdoggo.timeout = 2.5
+watchdoggo.mode = WatchDogMode.RAISE
 
 # Disable passthrough
 passthrough = digitalio.DigitalInOut(board.D12)
@@ -27,15 +33,25 @@ dotstars = adafruit_dotstar.DotStar(
     DOTSTAR_CLOCK, DOTSTAR_DATA, 1, brightness=DOTSTAR_BRIGHTNESS
 )
 
+# Connect buzzer
+buzzer = Buzzer('Buzzer', BUZZER_PIN)
+
 # Initialise state
 # TODO: One day it would be nice to sync this with non-volatile memory
 selectedOutputCount = 0
 switcherSwitchPressedAt = 0
 isSwitcherSwitchPressed = False
 tuneTriggered = False
+startupTunePlayed = False
 
 while True:
+    watchdoggo.feed() 
     switcherSwitch.update() # Update debouncer
+    buzzer.update() # Update buzzer
+    
+    if startupTunePlayed is False:
+        buzzer.play(STARTUP_TUNE)
+        startupTunePlayed = True
     
     # Get the current output. Using the modulo operator means we can just
     # endlessly add to the output count and it will wrap around
@@ -57,11 +73,15 @@ while True:
         switcherSwitchPressedAt = time.monotonic_ns()
         print('first press started at', switcherSwitchPressedAt)
     # Play a tune if the output change has been held down for long enough to switch
-    # Note, the switch wont actually happen until you lift the switchç
+    # Note, the switch wont actually happen until you lift the switchç
     elif switcherSwitch.value is False and isSwitcherSwitchPressed is True:
         switchHeldFor = time.monotonic_ns() - switcherSwitchPressedAt
         if switchHeldFor > MINIMUM_PRESS_TIME_TO_SWITCH and tuneTriggered is False:
             print('Play a tune here')
+            
+            # Calculate the next output and play its tune
+            nextOutput = OUTPUTS[(selectedOutputCount + 1) % len(OUTPUTS)]
+            buzzer.play(nextOutput.tune)
             tuneTriggered = True
 
 
