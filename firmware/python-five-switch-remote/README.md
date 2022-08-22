@@ -10,7 +10,7 @@ The centre key has three options:
 
 - Short press - Will press space
 - Medium press - Will press CMD+H
-- Long press - Will press EJECT
+- Long press - Will press EJECT followed by CTRL+TAB
 
 The timings and keys can all be configured in the `user_constants.py` file.
 
@@ -29,4 +29,4 @@ To develop the code use [`Code With Mu`](https://codewith.mu/). It will automati
 
 All of the X80 configuration is found in `x80_constants.py`. This creates a bunch of constants specific to the x80 like what switches are connected to what pins and what pull mode the switches are in. These shouldn't need to be changed between users.
 
-The `user_constants.py` is where we can tweak the behaviour of the switcher. Change which ports we want to enable and the colors of the LED etc.
+The `user_constants.py` is where we can tweak the behaviour of the switcher. Change which ports we want to enable and the colors of the LED etc.=xnk

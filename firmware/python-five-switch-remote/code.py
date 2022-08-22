@@ -22,7 +22,7 @@ from adafruit_hid.consumer_control import ConsumerControl
 from adafruit_hid.consumer_control_code import ConsumerControlCode
 
 # Watchdog will save if you crash
-watchdoggo.timeout = 2.5
+watchdoggo.timeout = 10
 watchdoggo.mode = WatchDogMode.RAISE
 
 # Disable passthrough
@@ -115,8 +115,13 @@ while True:
             keyboard.send(*CENTRE_KEY_HOLD_FIRST)
         # Otherwise its a long press
         else:
+            print('long press start')
             consumerControl.send(CENTRE_KEY_HOLD_SECOND)
-            print('long press')
+            print('Ejected')
+            time.sleep(2)
+            print('Slept')
+            keyboard.send(*CENTRE_KEY_HOLD_SECOND_FOLLOW_UP)
+            print('long press finished')
 
     # If you are currently holding the centre button we want to play the buzzer to indicate that you have hit the threshold
     if(centre.value is False and playedFirstBeep is False):
