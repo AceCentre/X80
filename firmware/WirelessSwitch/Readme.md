@@ -10,6 +10,14 @@ Most wireless switches either use Radio (e.g. LoRa) or BLE HID to operate. The p
 
 We aim to give example code to receive this BLE central code so you can do this without a dongle. 
 
+## Roadmap
+
+[] Get video demo working
+[] Add in low power features
+[] Adapt for x80 
+[] Write demo code for PC 
+[] Create docs page on Ace site
+
 ## Licence
 
 MIT
