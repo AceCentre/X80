@@ -10,6 +10,16 @@ Most wireless switches either use Radio (e.g. LoRa) or BLE HID to operate. The p
 
 We aim to give example code to receive this BLE central code so you can do this without a dongle. 
 
+## Details
+
+To try thus out get two nrf52840 feather express boards from adafruit. Then load up the firmware for each board. 
+
+The firmware for the switch sending part is called *advertisement*. You need to add two switches -  one for the actual switch (use a switch Jack) and a tactile swich for pairing. 
+
+The firmware for the recievfing part is known as the *central* firmware. There should be defined a led for indicating pairing. By default it's the red led of a nrf52840 Feather express.
+
+When pairing button is pressed on tits he advertisement board then the board sends specific pairing package and dongle receives this package and MAC address of the board it will listen for. The MAC is saved in flash memory and can be read later on start of dongle code
+
 ## Roadmap
 
 - [x] Get basic code working
@@ -19,6 +29,8 @@ We aim to give example code to receive this BLE central code so you can do this 
 - [ ] Adapt for x80 
 - [ ] Write demo code for PC 
 - [ ] Create docs page on Ace site
+- [ ] Add ability to listen for more than one mac address (more than one switch)
+
 
 ## Licence
 
