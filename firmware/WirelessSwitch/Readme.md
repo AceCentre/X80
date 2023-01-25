@@ -12,11 +12,13 @@ We aim to give example code to receive this BLE central code so you can do this 
 
 ## Roadmap
 
-[] Get video demo working
-[] Add in low power features
-[] Adapt for x80 
-[] Write demo code for PC 
-[] Create docs page on Ace site
+- [ x ] Get basic code working
+- [ x ] Add in pairing functionality by bringing close to central device
+- [ ] Get video demo working
+- [ ] Add in low power features
+- [ ] Adapt for x80 
+- [ ] Write demo code for PC 
+- [ ] Create docs page on Ace site
 
 ## Licence
 
