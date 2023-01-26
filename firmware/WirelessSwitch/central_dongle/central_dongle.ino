@@ -188,7 +188,7 @@ void setup()
     
   while( !TinyUSBDevice.mounted() ) delay(1);
   
-  while ( !Serial ) delay(10);   // for nrf52840 with native usb
+  //while ( !Serial ) delay(10);   // for nrf52840 with native usb
   Serial.println("USB mounted");
 
   get_mac_from_file();

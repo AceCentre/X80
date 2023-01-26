@@ -25,7 +25,7 @@ When pairing button is pressed on tits he advertisement board then the board sen
 - [x] Get basic code working
 - [x] Add in pairing functionality by bringing close to central device
 - [ ] Get video demo working
-- [ ] Add in low power features
+- [x] Add in low power features
 - [ ] Adapt for x80 
 - [ ] Write demo code for PC 
 - [ ] Create docs page on Ace site

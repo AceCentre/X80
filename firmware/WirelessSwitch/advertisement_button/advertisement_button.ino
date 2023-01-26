@@ -1,7 +1,10 @@
 #include <bluefruit.h>
 
-#define BUTTON_PIN 20
-#define PAIR_BUTTON_PIN 21
+#define LED 3                 // built-in led pin
+#define KEY_BUTTON 20          // keyboard button pin
+#define PAIR_BUTTON 21         // pair button pin
+
+uint32_t sleep_timeout = 5000; // sleep timeout in ms
 
 uint32_t inactivity_timeout = 500;
 uint32_t pairing_timeout = 100;
@@ -18,8 +21,6 @@ uint8_t button_state = 0;
 
 uint8_t pair_button_state_prev = 0;
 uint8_t pair_button_state = 0;
-
-   
 
 uint32_t read_interval = 10;
 
@@ -56,16 +57,24 @@ void setup_advertisment(void)
   //Bluefruit.Advertising.start(ADV_TIMEOUT);      // Stop advertising entirely after ADV_TIMEOUT seconds 
 }
 
+void enter_deepsleep() {
+  Serial.println("Sleep timeout. Entering into deepsleep");  
+  digitalWrite(LED, LOW);                     
+  pinMode(KEY_BUTTON,  INPUT_PULLUP_SENSE);
+  sd_power_system_off();
+}
 
 void setup() 
 {
+  last_action = millis();
+
   set_bit = 1 << package_size;
 
-  // configure BUTTON_PIN as input with a pullup (pin is active low)
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
-  pinMode(PAIR_BUTTON_PIN, INPUT_PULLUP);
+  // configure KEY_BUTTON as input with a pullup (pin is active low)
+  pinMode(KEY_BUTTON, INPUT_PULLUP);
+  pinMode(PAIR_BUTTON, INPUT_PULLUP);
   
-  Serial.begin(115200);
+  Serial.begin(115200);                      
   //while ( !Serial ) delay(10);   // for nrf52840 with native usb
 
   Bluefruit.begin();
@@ -74,6 +83,7 @@ void setup()
   // Set up advertisement
   setup_advertisment();
 
+  /*
   ble_gap_addr_t button_address = Bluefruit.getAddr();
   Serial.print("Button MAC address: ");
   Serial.printf("%X");
@@ -81,11 +91,17 @@ void setup()
     Serial.printf(":%X", button_address.addr[i]);    
   }
   Serial.println();
+  */
+  
+  Serial.printf("Board is set up after: %u\n", (millis()-last_action));
+  pinMode(LED, OUTPUT);
+  digitalWrite(LED, HIGH);
+  last_action = millis();
 }
 
 void loop() {
 
-  button_state = !digitalRead(BUTTON_PIN);
+  button_state = !digitalRead(KEY_BUTTON);
   if(button_state != button_state_prev) {    
     if(!Bluefruit.Advertising.isRunning()) {
       Bluefruit.Advertising.start();      
@@ -98,7 +114,7 @@ void loop() {
   }
   button_state_prev = button_state;
 
-  pair_button_state = ! digitalRead(PAIR_BUTTON_PIN);
+  pair_button_state = ! digitalRead(PAIR_BUTTON);
   if(pair_button_state == 1 && pair_button_state_prev == 0) {    
     if(!Bluefruit.Advertising.isRunning()) {
       Bluefruit.Advertising.start();      
@@ -146,6 +162,10 @@ void loop() {
       pairing = false;
       Serial.println("Stoping pairing advertisement");      
     }    
+  }
+  
+  if((millis() - last_action) > sleep_timeout) {
+    enter_deepsleep();
   }
 
   delay(read_interval);
