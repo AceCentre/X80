@@ -9,11 +9,13 @@ You have a nrf52840 board that sends and a nrf52840 board that receives. We are 
 Most wireless switches either use Radio (e.g. LoRa) or BLE HID to operate. The problem with BLE HID is that its power hungry and for switch users it cant really sleep. So this technique has a advertisement (advertisement) beacon which starts advertisement on a switch press. The receiving code (central) is searching for a MAC address beacon and seeing it come on/off.  The central code/dongle then sends a HID space over USB. 
 
 On the advertisement (switch sending) board:
-- Switch is pressed. This tells the board to start advertising
+- When device sleeps and key button pressed first time, board wakes up. Once the LED lights the board is ready and you can start pairing or transmitting button data.
+- When switch is pressed again board starts collecting button data into packages and advertise them.
 - It then sends out packages. These data packages are changed every 100ms. Each package has recorded 10 buttons states with interval 10 ms(which in total 100ms).
+- After some time of inactivity (5sec default) it will go back to sleep.
 
 On the central (dongle) side:
-- Dongle able to scan and receive all packages
+- It scans BLE devices and for the MAC address device it receives package which has recorded button states over 100ms and then replays these states via USB keyboard.
 
 
 ## Details
@@ -28,7 +30,7 @@ When pairing button is pressed on the advertisement board it will send a specifi
 
 Note - to save battery the advertisement board is set to sleep. Pressing the switch will wake it up - all in all this takes around 1second. 
 
-## battery life estimates
+## Battery life estimates
 
 
 When pressing key buttton and transmitting data, it consumes around 1000 uA.
@@ -40,6 +42,15 @@ So 200mAh/20uA = 10000 hrs in deep sleep mode.
 But in general cheap batteries will have less capacity.
 
 Consumption can also vary on different boads. My measurements were made with nrf52840 dongle.
+
+## The snag
+
+Take a look at ``central_dongle/scan_advertisements.py`` 
+
+What you find is that the OS built in BLE device/software drops packets - in short its not reliable. See https://github.com/hbldh/bleak/issues/394 which document the issue. 
+
+
+
 
 ## Roadmap
 
