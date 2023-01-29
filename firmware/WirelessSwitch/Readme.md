@@ -47,7 +47,7 @@ Consumption can also vary on different boads. My measurements were made with nrf
 
 Take a look at ``central_dongle/scan_advertisements.py`` 
 
-What you find is that the OS built in BLE device/software drops packets - in short its not reliable. See https://github.com/hbldh/bleak/issues/394 which document the issue. 
+What you find is that the OS built in BLE device/software drops packets - in short its not reliable. See https://github.com/hbldh/bleak/issues/394 (and the linked https://github.com/hbldh/bleak/issues/494) which document the issue. 
 
 
 
