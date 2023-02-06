@@ -4,14 +4,14 @@
 #define BUTTON_PIN A2
 #define PAIR_BUTTON_PIN A0
 
-uint32_t inactivity_timeout = 500;
+uint32_t inactivity_timeout = 1000;
 uint32_t sleep_timeout = 5000;
-uint32_t pairing_timeout = 100;
+uint32_t pairing_timeout = 500;
 
 uint32_t last_action = 0;
 
 uint16_t sample_pack = 0;
-uint8_t package_size = 10;
+uint8_t package_size = 8;
 uint8_t package_i = 0;
 uint8_t sample_n = 0;
 uint16_t set_bit;
@@ -21,20 +21,22 @@ uint8_t button_state = 0;
 uint8_t pair_button_state_prev = 0;
 uint8_t pair_button_state = 0;
 
-   
+uint32_t read_interval = 30;
 
-uint32_t read_interval = 10;
-
-uint8_t pair_package[] = {0xFF,0xFF,0x9C,0x7C};
-uint8_t adv_package[] =  {0xFF,0xFF,0,0,0};
+uint8_t pair_package[] = {0xFF,0xFF,0x9C,0x7C,0,0,0};
+uint8_t adv_package[] =  {0xFF,0xFF,0,0,0,0,0};
 
 bool pairing = false;
 bool sampling = false;
 
-void update_advertisement_data(){
+void update_advertisement_data(){  
   adv_package[2] = package_i;
-  adv_package[3] = sample_pack>>8;
-  adv_package[4] = sample_pack;
+
+  for(uint8_t i=5;i>2;i--) {
+    adv_package[i+1] = adv_package[i]; 
+  } 
+
+  adv_package[3] = sample_pack;
   
   Bluefruit.Advertising.clearData();    
   Bluefruit.Advertising.addManufacturerData(adv_package, sizeof(adv_package));
@@ -76,7 +78,7 @@ void setup()
   pinMode(BUTTON_PIN, INPUT_PULLUP);
   pinMode(PAIR_BUTTON_PIN, INPUT_PULLUP);
   
-  //Serial.begin(115200);                      
+  Serial.begin(115200);                      
   //while ( !Serial ) delay(10);   // for nrf52840 with native usb
 
   Bluefruit.begin();
@@ -165,7 +167,6 @@ void loop() {
       Serial.println("Stoping pairing advertisement");      
     }    
   }
-
 
   delay(read_interval);
 }
