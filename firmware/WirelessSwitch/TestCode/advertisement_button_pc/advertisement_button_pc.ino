@@ -1,10 +1,10 @@
 #include <bluefruit.h>
 
 #define LED 10
-#define BUTTON_PIN A2
-#define PAIR_BUTTON_PIN A0
+#define BUTTON_PIN 20
+#define PAIR_BUTTON_PIN 21
 
-uint32_t inactivity_timeout = 1000;
+uint32_t inactivity_timeout = 500;
 uint32_t sleep_timeout = 5000;
 uint32_t pairing_timeout = 500;
 
@@ -134,10 +134,15 @@ void loop() {
 
   
   if(sampling) {
-    if((millis() - last_action) > inactivity_timeout && Bluefruit.Advertising.isRunning()) {
+    if((millis() - last_action) > inactivity_timeout && button_state == 0 && Bluefruit.Advertising.isRunning()) {
       Bluefruit.Advertising.stop();
+      Serial.println("Stoping button advertisement");
+      for(int i=2;i<7;i++) {
+        adv_package[i] = 0;
+      }
+      
       sampling = false;
-      Serial.println("Stoping button advertisement");      
+            
     }
 
     if(sample_n < package_size) {
