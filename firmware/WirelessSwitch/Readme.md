@@ -15,7 +15,7 @@ On the advertisement (switch sending) board:
 - After some time of inactivity (5sec default) it will go back to sleep.
 
 On the central (dongle) side:
-- It scans BLE devices and for the MAC address device it receives package which has recorded button states over 100ms and then replays these states via USB keyboard.
+- It scans BLE devices and for the MAC address device it receives package which has recorded button states over 100ms and then replays these states via USB keyboard (of course you could choose to do this as a joystick button or whatever. That I'm not too bothered about)
 
 
 ## Details
