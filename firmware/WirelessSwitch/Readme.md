@@ -6,7 +6,7 @@ You have a nrf52840 board that sends and a nrf52840 board that receives. We are 
 
 ## How?
 
-Most wireless switches either use Radio (e.g. LoRa) or BLE HID to operate. The problem with BLE HID is that its power hungry and for switch users it cant really sleep. So this technique has a advertisement (advertisement) beacon which starts advertisement on a switch press. The receiving code (central) is searching for a MAC address beacon and seeing it come on/off.  The central code/dongle then sends a HID space over USB. 
+Most wireless switches either use Radio (e.g. LoRa) or BLE HID to operate. The problem with BLE HID is that its power hungry and for switch users it cant really sleep. So this technique has a advertisement (advertisement) beacon which starts advertisement on a switch press. Full detail below.. 
 
 On the advertisement (switch sending) board:
 - When device sleeps and key button pressed first time, board wakes up. Once the LED lights the board is ready and you can start pairing or transmitting button data.
@@ -28,10 +28,13 @@ The firmware for the recievfing part is known as the *central* firmware. There s
 
 When pairing button is pressed on the advertisement board it will send a specific pairing package and dongle receives this package and MAC address of the board it will listen for. The MAC is saved in flash memory and can be read later on start of dongle code.
 
-Note - to save battery the advertisement board is set to sleep. Pressing the switch will wake it up - all in all this takes around 1second. 
+Note - to save battery the advertisement board is set to sleep. Pressing the switch will wake it up - all in all this takes around 1 second. 
+
+## Software only technique
+
+So you can use a nrf52840 USB dongle to receive the switch press - or right now you could do it in software alone. See the python directory for this code. 
 
 ## Battery life estimates
-
 
 When pressing key buttton and transmitting data, it consumes around 1000 uA.
 In sleep mode it consumes 20 uA.
