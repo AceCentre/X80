@@ -47,13 +47,13 @@ Consumption can also vary on different boads. My measurements were made with nrf
 ## Roadmap
 
 - [x] Get basic code working
-- [x] Add in pairing functionality by bringing close to central device
+- [x] Add in pairing functionality
 - [ ] Get video demo working
 - [x] Add in low power features
 - [ ] Adapt for x80 
 - [x] Write demo code for PC 
 - [ ] Create docs page on Ace site
-- [ ] Add ability to listen for more than one mac address (more than one switch)
+- [ ] Add ability to listen for more than one switch
 
 
 ## Licence
