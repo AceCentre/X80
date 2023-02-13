@@ -57,7 +57,7 @@ E.g.
 - [Adafruit itsybitsy nrf52840](https://shop.pimoroni.com/products/adafruit-itsybitsy-nrf52840-express-bluetooth-le). Same as the feather - but smaller and slight less flashy
 
 And for the dongle
-- This is nice as its all in one piece. (nrf52840 USB key)[https://thepihut.com/products/nrf52840-usb-key-with-tinyuf2-bootloader-bluetooth-low-energy-mdbt50q-rx]
+- This is nice as its all in one piece. [nrf52840 USB key](https://thepihut.com/products/nrf52840-usb-key-with-tinyuf2-bootloader-bluetooth-low-energy-mdbt50q-rx)
 
 ## Roadmap
 
