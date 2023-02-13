@@ -1,6 +1,6 @@
 #include <bluefruit.h>
 #include "Adafruit_TinyUSB.h"
-
+    
 #include <InternalFileSystem.h>
 using namespace Adafruit_LittleFS_Namespace;
 File file(InternalFS);
@@ -26,7 +26,7 @@ uint8_t keycode[6] = { 0 };
 
 bool keyboard_state = false;
 
-uint8_t pair_package[] = {0x03, 0xFF, 0x9C, 0x7C};
+uint8_t pair_package[] = {0x08, 0xFF, 0xFF, 0xFF, 0x9C, 0x7C, 0, 0, 0};
 uint8_t button_mac_arr[6] = { 0 };
 
 uint8_t button_state = 0;
@@ -34,13 +34,13 @@ uint8_t button_state = 0;
 uint32_t last_update = 0;
 uint32_t last_update_diff = 0;
 
-uint16_t received_package;
-uint8_t  package_i;
-uint8_t  package_size = 10;
+uint8_t received_package;
+uint8_t package_i = 255;
+uint8_t package_size = 8;
 
-uint16_t replay_package = 0;
-uint8_t  replay_i = 0;
-uint32_t replay_interval = 10;
+uint8_t replay_package = 0;
+uint8_t  replay_i = 255;
+uint32_t replay_interval = 30;
 
 void get_mac_from_file() {
   Serial.println("Reading saved mac");
@@ -105,7 +105,7 @@ bool target_device(uint8_t* received_mac) {
 }
 
 bool repairing_package(uint8_t* received_package) {
-  for(int i = 0; i<4; i++) {
+  for(int i = 0; i<9; i++) {
     if(received_package[i] != pair_package[i]) {
       return false;
     }
@@ -114,13 +114,13 @@ bool repairing_package(uint8_t* received_package) {
   return true;
 }
 
-void unpack_package(uint16_t received_package) {
+void unpack_package(uint8_t received_package) {
   //Serial.printf("Unpacking package: %X\n", received_package);
   for(uint8_t i=0; i<package_size; i++) {
     //Serial.printf("%u; button: ", i);
     while (!usb_hid.ready()) {}
     if(received_package & 1) {
-      usb_hid.keyboardReport(0, 0, keycode);
+      usb_hid.keyboardReport(0, 0, keycode);      
       //Serial.printf("pressed\n");
     } else {
       usb_hid.keyboardRelease(0);
@@ -157,19 +157,16 @@ void scan_callback(ble_gap_evt_adv_report_t* report)
       Serial.println("Device already paired");
     }
   } else if(target_device(report->peer_addr.addr)) {    
-    if(package_i != report->data.p_data[2]) {
+    if(package_i != report->data.p_data[4]) {
       last_update_diff = millis() - last_update;
       last_update = millis();
-      Serial.printf("Since last update: %u; Received package: %X-%X-%X\n", last_update_diff, report->data.p_data[2], report->data.p_data[3], report->data.p_data[4]);
+      Serial.printf("Since last update: %u; Received package: %X-%X\n", last_update_diff, report->data.p_data[4], report->data.p_data[5]);
       
-      package_i = report->data.p_data[2];
-      received_package = report->data.p_data[3]<<8;
-      received_package += report->data.p_data[4];
-      
-      //unpack_package(received_package);
+      package_i = report->data.p_data[4];
+      received_package = report->data.p_data[5];
+
     }
   }
-  
 
   // For Softdevice v6: after received a report, scanner will be paused
   // We need to call Scanner resume() to continue scanning
@@ -198,7 +195,7 @@ void setup()
   Bluefruit.setName("Bluefruit52");
 
   // Start Central Scan
-  Bluefruit.setConnLedInterval(20);
+  Bluefruit.setConnLedInterval(100);
   Bluefruit.Scanner.setRxCallback(scan_callback);
   Bluefruit.Scanner.start(0);
   
@@ -221,9 +218,10 @@ void loop()
 
     indicate_pair = false;
   }
-  if(replay_i != package_i) {
+  if(replay_i != package_i) {    
     replay_i = package_i;
     replay_package = received_package;
+    Serial.printf("replaying package %u: %u\n", replay_i, replay_package);
     unpack_package(replay_package);    
   }
 }

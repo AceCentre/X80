@@ -1,18 +1,19 @@
 #include <bluefruit.h>
 
-#define LED 3                 // built-in led pin
-#define KEY_BUTTON 20          // keyboard button pin
-#define PAIR_BUTTON 21         // pair button pin
+//#define DEBUG
 
-uint32_t sleep_timeout = 5000; // sleep timeout in ms
+#define LED 10
+#define KEY_BUTTON 20
+#define PAIR_BUTTON 21
 
 uint32_t inactivity_timeout = 500;
-uint32_t pairing_timeout = 100;
+uint32_t sleep_timeout = 5000;
+uint32_t pairing_timeout = 500;
 
 uint32_t last_action = 0;
 
 uint16_t sample_pack = 0;
-uint8_t package_size = 10;
+uint8_t package_size = 8;
 uint8_t package_i = 0;
 uint8_t sample_n = 0;
 uint16_t set_bit;
@@ -22,18 +23,22 @@ uint8_t button_state = 0;
 uint8_t pair_button_state_prev = 0;
 uint8_t pair_button_state = 0;
 
-uint32_t read_interval = 10;
+uint32_t read_interval = 30;
 
-uint8_t pair_package[] = {0x9C,0x7C};
-uint8_t adv_package[] = {0,0,0};
+uint8_t pair_package[] = {0xFF,0xFF,0x9C,0x7C,0,0,0};
+uint8_t adv_package[] =  {0xFF,0xFF,0,0,0,0,0};
 
 bool pairing = false;
 bool sampling = false;
 
-void update_advertisement_data(){
-  adv_package[0] = package_i;
-  adv_package[1] = sample_pack>>8;
-  adv_package[2] = sample_pack;
+void update_advertisement_data(){  
+  adv_package[2] = package_i;
+
+  for(uint8_t i=5;i>2;i--) {
+    adv_package[i+1] = adv_package[i]; 
+  } 
+
+  adv_package[3] = sample_pack;
   
   Bluefruit.Advertising.clearData();    
   Bluefruit.Advertising.addManufacturerData(adv_package, sizeof(adv_package));
@@ -58,7 +63,8 @@ void setup_advertisment(void)
 }
 
 void enter_deepsleep() {
-  Serial.println("Sleep timeout. Entering into deepsleep");  
+  Serial.println("Sleep timeout. Entering into deepsleep");
+  delay(500);
   digitalWrite(LED, LOW);                     
   pinMode(KEY_BUTTON,  INPUT_PULLUP_SENSE);
   sd_power_system_off();
@@ -70,12 +76,14 @@ void setup()
 
   set_bit = 1 << package_size;
 
-  // configure KEY_BUTTON as input with a pullup (pin is active low)
+  // configure BUTTON_PIN as input with a pullup (pin is active low)
   pinMode(KEY_BUTTON, INPUT_PULLUP);
   pinMode(PAIR_BUTTON, INPUT_PULLUP);
   
-  Serial.begin(115200);                      
-  //while ( !Serial ) delay(10);   // for nrf52840 with native usb
+  Serial.begin(115200);
+  #ifdef DEBUG                      
+    while ( !Serial ) delay(10);   // for nrf52840 with native usb
+  #endif
 
   Bluefruit.begin();
   Bluefruit.setTxPower(4);    // Check bluefruit.h for supported values
@@ -93,7 +101,7 @@ void setup()
   Serial.println();
   */
   
-  Serial.printf("Board is set up after: %u\n", (millis()-last_action));
+  Serial.printf("Board is set up after: %ums\n", (millis()-last_action));
   pinMode(LED, OUTPUT);
   digitalWrite(LED, HIGH);
   last_action = millis();
@@ -102,11 +110,7 @@ void setup()
 void loop() {
 
   button_state = !digitalRead(KEY_BUTTON);
-  if(button_state != button_state_prev) {    
-    if(!Bluefruit.Advertising.isRunning()) {
-      Bluefruit.Advertising.start();      
-    }
-    Serial.println("Starting button advertisement");
+  if(button_state != button_state_prev) {
     sampling = true;
     pairing = false;
 
@@ -116,12 +120,14 @@ void loop() {
 
   pair_button_state = ! digitalRead(PAIR_BUTTON);
   if(pair_button_state == 1 && pair_button_state_prev == 0) {    
+    set_pair_data();
+    
     if(!Bluefruit.Advertising.isRunning()) {
-      Bluefruit.Advertising.start();      
-    }    
-    Serial.println("Starting pairing advertisement");
-    pairing = true;
-    set_pair_data();    
+      Bluefruit.Advertising.start();
+      Serial.println("Starting pairing advertisement");
+    }
+
+    pairing = true;        
     sampling = false;
 
     last_action = millis();
@@ -130,29 +136,40 @@ void loop() {
 
   
   if(sampling) {
-    if((millis() - last_action) > inactivity_timeout && Bluefruit.Advertising.isRunning()) {
+    if((millis() - last_action) > inactivity_timeout && button_state == 0 && Bluefruit.Advertising.isRunning()) {
       Bluefruit.Advertising.stop();
-      sampling = false;
-      Serial.println("Stoping button advertisement");      
-    }
-
-    if(sample_n < package_size) {
-      if(sample_n == 0){
-        //Serial.printf("Gathering new package\n");
+      Serial.println("Stopping button advertisement");
+      for(int i=2;i<7;i++) {
+        adv_package[i] = 0;
       }
-      //Serial.printf("Button state: %u\n", button_state);
-      if(button_state) {
-        sample_pack = sample_pack | set_bit;
-      }
-      sample_pack = sample_pack >> 1;
-      sample_n++;  
-    } else {
-      //Serial.printf("Package gathered; id: %X; sample: %X\n", package_i, sample_pack);
-      update_advertisement_data();
       
-      sample_pack = 0;
-      sample_n = 0;
-      package_i++;
+      sampling = false;
+            
+    } else {
+      if(sample_n < package_size) {
+        if(sample_n == 0){
+          //Serial.printf("Gathering new package\n");
+        }
+        //Serial.printf("Button state: %u\n", button_state);
+        if(button_state) {
+          sample_pack = sample_pack | set_bit;
+        }
+        sample_pack = sample_pack >> 1;
+        sample_n++;  
+      } else {
+        //Serial.printf("Package gathered; id: %X; sample: %X\n", package_i, sample_pack);
+        update_advertisement_data();
+        
+        // start button avertising after package was gathered 
+        if(!Bluefruit.Advertising.isRunning()) {
+          Bluefruit.Advertising.start();
+          Serial.println("Starting button advertisement");
+        }
+
+        sample_pack = 0;
+        sample_n = 0;
+        package_i++;
+      }
     }
   }
 
@@ -160,13 +177,15 @@ void loop() {
     if((millis() - last_action) > pairing_timeout && Bluefruit.Advertising.isRunning()) {
       Bluefruit.Advertising.stop();
       pairing = false;
-      Serial.println("Stoping pairing advertisement");      
+      Serial.println("Stopping pairing advertisement");      
     }    
   }
-  
-  if((millis() - last_action) > sleep_timeout) {
+
+  #ifndef DEBUG
+  if((millis() - last_action) > sleep_timeout && button_state == 0) {
     enter_deepsleep();
   }
-
+  #endif
+  
   delay(read_interval);
 }

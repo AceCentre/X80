@@ -43,14 +43,6 @@ But in general cheap batteries will have less capacity.
 
 Consumption can also vary on different boads. My measurements were made with nrf52840 dongle.
 
-## The snag
-
-Take a look at ``central_dongle/scan_advertisements.py`` 
-
-What you find is that the OS built in BLE device/software drops packets - in short its not reliable. See https://github.com/hbldh/bleak/issues/394 (and the linked https://github.com/hbldh/bleak/issues/494) which document the issue. 
-
-
-
 
 ## Roadmap
 
@@ -59,7 +51,7 @@ What you find is that the OS built in BLE device/software drops packets - in sho
 - [ ] Get video demo working
 - [x] Add in low power features
 - [ ] Adapt for x80 
-- [ ] Write demo code for PC (drafted)
+- [x] Write demo code for PC 
 - [ ] Create docs page on Ace site
 - [ ] Add ability to listen for more than one mac address (more than one switch)
 
