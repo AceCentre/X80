@@ -1,5 +1,8 @@
 # Wireless Switch
 
+
+> ! This is historic - Now see https://github.com/AceCentre/OWS for the most up-to-date  details
+
 ## What does this do?
 
 You have a nrf52840 board that sends and a nrf52840 board that receives. We are demonstrating here how to do wireless switches with LOW POWER. 
