@@ -8,7 +8,7 @@ from user_constants import *
 from buzzer import Buzzer
 from microcontroller import watchdog as watchdoggo
 from watchdog import WatchDogMode
-
+from pulser import Pulser
 
 # Initialize watchdog
 watchdoggo.timeout = 2.5
@@ -24,6 +24,9 @@ controllingSwitch = digitalio.DigitalInOut(CONTROLLING_SWITCH)
 controllingSwitch.direction = digitalio.Direction.INPUT
 controllingSwitch.pull = PULL_MODES[CONTROLLING_SWITCH]
 
+# Pulser
+pulser = Pulser()
+
 # Connect buzzer
 buzzer = Buzzer('Buzzer', BUZZER_PIN)
 
@@ -38,6 +41,7 @@ isOutputOn = False  # Tracks the current state of the output
 while True:
     watchdoggo.feed()
     buzzer.update() # Update buzzer
+    pulser.update() # Update pulser
     
     if startupTunePlayed is False:
         buzzer.play(STARTUP_TUNE)
@@ -60,6 +64,8 @@ while True:
         selectedOutput.value = isOutputOn
         if isOutputOn:
             print(f"{selectedOutput.id} Switch ON")
+            print('Send Pulse')
+            pulser.sendPulse(selectedOutput)
             dotstars[0] = selectedOutput.selectedColor  # Use the selected output's color
         else:
             print(f"{selectedOutput.id} Switch OFF")
